@@ -1,4 +1,4 @@
-# goURL-shortie
+# go-distributed-playground
 High Perf URL shortener in Go
 
 This repo also contains my initial understanding on go syntaxes around structs and pointers

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"goURL-shortie/rpc-toy/common"
 	"net"
 	"net/rpc"
 	"time"
@@ -14,25 +15,17 @@ type Calculator struct {
 	multiplyCalls int
 }
 
-type Args struct {
-	A, B int
-}
-
-type Reply struct {
-	Result int
-}
-
 // exported method name must start with capital letter, it means it can be accessed from other packages.
 // RPC method arguments and reply MUST be pointers.
 // Also, RPC method must return an error type.
-func (c *Calculator) Add(args *Args, reply *Reply) error {
+func (c *Calculator) Add(args *common.Args, reply *common.Reply) error {
 	reply.Result = args.A + args.B
 	c.addCalls++
 	fmt.Println("Add method called", c.addCalls, "times")
 	return nil
 }
 
-func (c *Calculator) Multiply(args *Args, reply *Reply) error {
+func (c *Calculator) Multiply(args *common.Args, reply *common.Reply) error {
 	time.Sleep(5 * time.Second)
 	reply.Result = args.A * args.B
 	c.multiplyCalls++

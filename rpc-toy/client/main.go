@@ -2,17 +2,10 @@ package main
 
 import (
 	"fmt"
+	"goURL-shortie/rpc-toy/common"
 	"net/rpc"
 	"time"
 )
-
-type Args struct {
-	A, B int
-}
-
-type Reply struct {
-	Result int
-}
 
 func main() {
 	client, err := rpc.Dial("tcp", "localhost:8000") // think of it like db connection, open it once and reuse it, close it when done.
@@ -20,9 +13,9 @@ func main() {
 		fmt.Println("Error Connecting: ", err)
 		return
 	}
-	args := &Args{A: 12, B: 89}
-	var reply Reply
-	var multiplicationReply Reply
+	args := &common.Args{A: 12, B: 89}
+	var reply common.Reply
+	var multiplicationReply common.Reply
 	// RPC is not like normal function call - its serialization + transport disguised as a function call.
 	// hence we need to pass args and reply as pointers.
 	fmt.Println("Time Stamp Before Addition:", time.Now())

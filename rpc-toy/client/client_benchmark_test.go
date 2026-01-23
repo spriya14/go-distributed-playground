@@ -29,6 +29,54 @@ func BenchmarkRpcClientCall(b *testing.B) {
 	}
 }
 
+// **** --------Adding RPC payload knob (tiny vs 64KB)---------------------- ****
+func BenchmarkRpcClientCall_TinyPayload(b *testing.B) {
+	// setup code - dial RPC server
+	client, err := rpc.Dial("tcp", "localhost:8000")
+	if err != nil {
+		b.Fatal("Failed to dial RPC server: ", err)
+	}
+	defer client.Close()
+	args := &common.Args{A: 10, B: 20, Payload: make([]byte, 16)}
+	var reply common.Reply
+	b.ReportAllocs()
+	expected := 10 + 20 + 16
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		err := client.Call("Calculator.Add", args, &reply)
+		if err != nil {
+			b.Fatal("RPC call failed: ", err)
+		}
+		if reply.Result != expected {
+			b.Errorf("Unexpected reply: got %d, want %d", reply.Result, expected)
+		}
+	}
+
+}
+
+func BenchmarkRpcClientCall_LargePayload(b *testing.B) {
+	client, err := rpc.Dial("tcp", "localhost:8000")
+	if err != nil {
+		b.Fatal("Failed to dial RPC server: ", err)
+	}
+	defer client.Close()
+	buf := make([]byte, 64*1024)
+	args := &common.Args{A: 10, B: 20, Payload: buf}
+	var reply common.Reply
+	b.ReportAllocs()
+	expected := 10 + 20 + 65536
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		err := client.Call("Calculator.Add", args, &reply)
+		if reply.Result != expected {
+			b.Errorf("Unexpected reply: got %d, want %d", reply.Result, expected)
+		}
+		if err != nil {
+			b.Fatal("RPC call failed: ", err)
+		}
+	}
+}
+
 // **** ---- Local benchmark without RPC overhead ---- ****
 
 type Calculator struct {

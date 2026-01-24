@@ -19,7 +19,7 @@ type Calculator struct {
 // RPC method arguments and reply MUST be pointers.
 // Also, RPC method must return an error type.
 func (c *Calculator) Add(args *common.Args, reply *common.Reply) error {
-	reply.Result = args.A + args.B
+	reply.Result = args.A + args.B + len(args.Payload)
 	c.addCalls++
 	fmt.Println("Add method called", c.addCalls, "times")
 	return nil

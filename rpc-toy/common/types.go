@@ -1,7 +1,8 @@
 package common
 
 type Args struct {
-	A, B int
+	A, B    int
+	Payload []byte
 }
 
 type Reply struct {

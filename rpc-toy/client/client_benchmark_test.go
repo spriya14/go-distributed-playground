@@ -126,6 +126,41 @@ func BenchmarkRpcClientCall_LargePayload_AllocPerCall(b *testing.B) {
 	}
 }
 
+// *** --- Benchmarking using shared Pool of Payload Buffers ---- ****
+
+func BenchmarkRpcClientCall_LargePayload_BufferPool(b *testing.B) {
+	client, err := rpc.Dial("tcp", "localhost:8000")
+	if err != nil {
+		b.Fatal("Failed to dial RPC server: ", err)
+	}
+	defer client.Close()
+	pool := make(chan []byte, 100) // buffer pool channel
+
+	// Pre-fill the pool with buffers
+	for i := 0; i < 100; i++ {
+		pool <- make([]byte, 64*1024)
+	}
+	b.ResetTimer()
+	b.RunParallel(func(pb *testing.PB) {
+
+		args := &common.Args{A: 10, B: 20}
+		var reply common.Reply
+		for pb.Next() {
+			buf := <-pool
+			args.Payload = buf
+			expected := 10 + 20 + 65536
+			err := client.Call("Calculator.Add", args, &reply)
+			if reply.Result != expected {
+				b.Errorf("Unexpected reply: got %d, want %d", reply.Result, expected)
+			}
+			if err != nil {
+				b.Fatal("RPC call failed: ", err)
+			}
+			pool <- buf
+		}
+	})
+}
+
 // **** ---- Local benchmark without RPC overhead ---- ****
 
 type Calculator struct {

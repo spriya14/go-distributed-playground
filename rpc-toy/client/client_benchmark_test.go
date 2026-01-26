@@ -185,3 +185,45 @@ func BenchmarkLocalAdd(b *testing.B) {
 		}
 	}
 }
+
+// Benchmark RPC with variable payload sizes
+func BenchmarkRpcClientCall_VarPayloadSize(b *testing.B) {
+	b.Run("16KB", func(b *testing.B) {
+		Bechmark_with_provided_payloadSize(b, 16*1024)
+	})
+	b.Run("32KB", func(b *testing.B) {
+		Bechmark_with_provided_payloadSize(b, 32*1024)
+	})
+	b.Run("64KB", func(b *testing.B) {
+		Bechmark_with_provided_payloadSize(b, 64*1024)
+	})
+	b.Run("256KB", func(b *testing.B) {
+		Bechmark_with_provided_payloadSize(b, 256*1024)
+	})
+	b.Run("1024KB", func(b *testing.B) {
+		Bechmark_with_provided_payloadSize(b, 1024*1024)
+	})
+}
+
+func Bechmark_with_provided_payloadSize(b *testing.B, payloadSize int) {
+	client, err := rpc.Dial("tcp", "localhost:8000")
+	if err != nil {
+		b.Fatal("Failed to dial RPC server: ", err)
+	}
+	defer client.Close()
+	buf := make([]byte, payloadSize)
+	args := &common.Args{A: 10, B: 20, Payload: buf}
+	var reply common.Reply
+	b.ReportAllocs()
+	expected := 10 + 20 + payloadSize
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		err := client.Call("Calculator.Add", args, &reply)
+		if reply.Result != expected {
+			b.Fatalf("Unexpected reply: got %d, want %d", reply.Result, expected)
+		}
+		if err != nil {
+			b.Fatal("RPC call failed: ", err)
+		}
+	}
+}

@@ -8,3 +8,8 @@ type Args struct {
 type Reply struct {
 	Result int
 }
+
+type PayloadSize struct {
+	name string
+	size int
+}

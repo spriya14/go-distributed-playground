@@ -13,3 +13,7 @@ type PayloadSize struct {
 	name string
 	size int
 }
+
+type JsonResponse struct {
+	Result int `json:"result"`
+}

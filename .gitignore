@@ -3,3 +3,4 @@
 cpu.out
 mem.out
 *.test
+*.out

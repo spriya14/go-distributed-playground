@@ -189,23 +189,23 @@ func BenchmarkLocalAdd(b *testing.B) {
 // Benchmark RPC with variable payload sizes
 func BenchmarkRpcClientCall_VarPayloadSize(b *testing.B) {
 	b.Run("16KB", func(b *testing.B) {
-		Bechmark_with_provided_payloadSize(b, 16*1024)
+		bechmark_with_provided_payloadSize(b, 16*1024)
 	})
 	b.Run("32KB", func(b *testing.B) {
-		Bechmark_with_provided_payloadSize(b, 32*1024)
+		bechmark_with_provided_payloadSize(b, 32*1024)
 	})
 	b.Run("64KB", func(b *testing.B) {
-		Bechmark_with_provided_payloadSize(b, 64*1024)
+		bechmark_with_provided_payloadSize(b, 64*1024)
 	})
 	b.Run("256KB", func(b *testing.B) {
-		Bechmark_with_provided_payloadSize(b, 256*1024)
+		bechmark_with_provided_payloadSize(b, 256*1024)
 	})
 	b.Run("1024KB", func(b *testing.B) {
-		Bechmark_with_provided_payloadSize(b, 1024*1024)
+		bechmark_with_provided_payloadSize(b, 1024*1024)
 	})
 }
 
-func Bechmark_with_provided_payloadSize(b *testing.B, payloadSize int) {
+func bechmark_with_provided_payloadSize(b *testing.B, payloadSize int) {
 	client, err := rpc.Dial("tcp", "localhost:8000")
 	if err != nil {
 		b.Fatal("Failed to dial RPC server: ", err)

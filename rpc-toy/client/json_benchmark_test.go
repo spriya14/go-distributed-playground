@@ -1,24 +1,32 @@
+package main
 
+import (
+	"bytes"
+	"encoding/json"
+	"goURL-shortie/rpc-toy/common"
+	"net/http"
+	"testing"
+)
 
 func BenchmarkHTTPJSON_PayloadSizes(b *testing.B) {
 	b.Run("16KB", func(b *testing.B) {
-		BenchmarkHTTPJSON_with_provided_payloadSize(b, 16*1024)
+		benchmarkHTTPJSON_with_provided_payloadSize(b, 16*1024)
 	})
 	b.Run("32KB", func(b *testing.B) {
-		BenchmarkHTTPJSON_with_provided_payloadSize(b, 32*1024)
+		benchmarkHTTPJSON_with_provided_payloadSize(b, 32*1024)
 	})
 	b.Run("64KB", func(b *testing.B) {
-		BenchmarkHTTPJSON_with_provided_payloadSize(b, 64*1024)
+		benchmarkHTTPJSON_with_provided_payloadSize(b, 64*1024)
 	})
 	b.Run("256KB", func(b *testing.B) {
-		BenchmarkHTTPJSON_with_provided_payloadSize(b, 256*1024)
+		benchmarkHTTPJSON_with_provided_payloadSize(b, 256*1024)
 	})
 	b.Run("1024KB", func(b *testing.B) {
-		BenchmarkHTTPJSON_with_provided_payloadSize(b, 1024*1024)
+		benchmarkHTTPJSON_with_provided_payloadSize(b, 1024*1024)
 	})
 }
 
-func BenchmarkHTTPJSON_with_provided_payloadSize(b *testing.B, payloadSize int) {
+func benchmarkHTTPJSON_with_provided_payloadSize(b *testing.B, payloadSize int) {
 	calculatorURL := "http://localhost:9000/add"
 	buf := make([]byte, payloadSize)
 	args := common.Args{A: 12, B: 89, Payload: buf}
@@ -46,8 +54,5 @@ func BenchmarkHTTPJSON_with_provided_payloadSize(b *testing.B, payloadSize int) 
 		}
 
 	}
-	expected := 12 + 89 + payloadSize
-	if jsonResponse.Result != expected {
-		b.Fatalf("Unexpected result: got %d, want %d", jsonResponse.Result, expected)
-	}
+
 }

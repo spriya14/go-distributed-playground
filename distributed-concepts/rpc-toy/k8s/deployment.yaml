@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rpc-toy-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rpc-toy
+  template:
+    metadata:
+      labels:
+        app: rpc-toy
+    spec:
+      containers:
+      - name: rpc-toy-container
+        image: rpc-toy:2.0
+        ports:
+        - containerPort: 5173
+        imagePullPolicy: Never

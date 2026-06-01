@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: app-pod
+  name: app-pod
+spec:
+  containers:
+  - image: nginx
+    name: app-pod
+    envFrom:
+    - configMapRef:
+        name: app-config 
+    readinessProbe:
+      tcpSocket:
+        port: 80
+      periodSeconds: 5
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

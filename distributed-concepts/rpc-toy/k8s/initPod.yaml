@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: init-pod
+  name: init-pod
+spec:
+  initContainers:
+  - image: busybox
+    name: init-container
+    command: ['sh', '-c', 'echo initializing && echo hello from init > /init-data/index.html && sleep 5']
+    volumeMounts:
+    - name: shared-data
+      mountPath: /init-data
+  containers:
+  - image: nginx
+    name: main-container
+    volumeMounts:
+    - name: shared-data
+      mountPath: /usr/share/nginx/html
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+  volumes: 
+  - name: shared-data
+    emptyDir: {}
+status: {}
